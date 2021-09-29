@@ -19,6 +19,7 @@ function BlogForm({onSubmit}: BlogFormProps) {
             author: author,
             url: url
         }
+
         onSubmit(newBlog)
         setUrl('')
         setAuthor('')
@@ -30,6 +31,7 @@ function BlogForm({onSubmit}: BlogFormProps) {
         <form onSubmit={handleSubmit}>
             <h3>Title</h3>
             <input
+                id="title"
                 type="text"
                 value={title}
                 name="title"
@@ -38,6 +40,7 @@ function BlogForm({onSubmit}: BlogFormProps) {
             <br/>
             <h3>Author</h3>
             <input
+                id="author"
                 type="text"
                 value={author}
                 name="author"
@@ -46,6 +49,7 @@ function BlogForm({onSubmit}: BlogFormProps) {
             <br/>
             <h3>URL</h3>
             <input
+                id="url"
                 type="text"
                 value={url}
                 name="Url"

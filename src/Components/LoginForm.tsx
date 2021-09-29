@@ -20,6 +20,7 @@ function LoginForm({onSubmit}: LoginFormProps) {
             <div>
                 Username:
                 <TextField
+                    id="username"
                     type="text"
                     variant="outlined"
                     placeholder="Username"
@@ -33,6 +34,7 @@ function LoginForm({onSubmit}: LoginFormProps) {
             <div>
                 Password:
                 <TextField
+                    id="password"
                     type="password"
                     variant="outlined"
                     placeholder="Password"
@@ -42,7 +44,7 @@ function LoginForm({onSubmit}: LoginFormProps) {
                     name="Password"
                 />
             </div>
-            <Button type="submit" variant="contained" color="primary" disableElevation>Login</Button>
+            <Button id="login-button" type="submit" variant="contained" color="primary" disableElevation>Login</Button>
         </form>
     </>
 }

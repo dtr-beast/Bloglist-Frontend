@@ -16,9 +16,9 @@ function Blog({blog, onLike, onDelete}: BlogProps) {
         marginBottom: 5
     }
     return (
-        <div style={style}>
+        <div style={style} className="blogDiv">
             <br/>
-            <p><a href={blog.url}>{blog.title}</a> By {blog.author}</p>
+            <p><a href={blog.url} target="_blank" rel="noreferrer noopener">{blog.title}</a> By {blog.author}</p>
             {blog.likes} Likes
             <br/>
             <button onClick={() => onLike(blog)}>Like</button>

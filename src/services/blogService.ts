@@ -16,6 +16,7 @@ async function create(blog: Blog): Promise<ReceivedBlog> {
 }
 
 async function update(blog: ReceivedBlog): Promise<ReceivedBlog> {
+    console.log(blog);
     // @ts-ignore
     blog.user = blog.user.id
     const response = await axios.put(`${URL}/${blog.id}`, blog, {headers: {authorization: token}})

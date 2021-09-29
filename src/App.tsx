@@ -15,23 +15,24 @@ function App() {
     // User Details
     const [user, setUser] = useState<User | null>(null)
 
-    async function downloadBlogs() {
-        function compareBlogs(a: ReceivedBlog, b: ReceivedBlog) {
-            if (a.likes > b.likes) {
-                return -1
-            }
-            if (a.likes < b.likes) {
-                return 1
-            }
-            return 0
+    function compareBlogs(a: ReceivedBlog, b: ReceivedBlog) {
+        if (a.likes > b.likes) {
+            return -1
         }
+        if (a.likes < b.likes) {
+            return 1
+        }
+        return 0
+    }
+
+    async function downloadBlogs() {
         const blogs = await blogService.getAll()
         blogs.sort(compareBlogs)
         setBlogs(blogs)
     }
 
     useEffect(() => {
-        downloadBlogs()
+        downloadBlogs().then(r => {})
     }, [])
 
     useEffect(() => {
@@ -55,8 +56,8 @@ function App() {
     }
 
     function handleLogout() {
-        setUser(null)
         window.localStorage.removeItem('loggedBlogAppUser')
+        setUser(null)
     }
 
     async function handleBlog(newBlog: any) {
@@ -72,8 +73,13 @@ function App() {
     // TODO: Improve this, downloading all the blogs again is tedious, change it so only the certain blog is
     //  updated. Search how to rerender the particular Blog component using its ID or something
     async function handleLike(blog: ReceivedBlog) {
-        await blogService.update({...blog, likes: blog.likes + 1})
-        await downloadBlogs()
+        const updatedBlog = await blogService.update({...blog, likes: blog.likes + 1})
+        setBlogs(prevBlogs => {
+            const newBlogs = prevBlogs.filter(blog => blog.id !== updatedBlog.id)
+            newBlogs.push(updatedBlog)
+            return newBlogs.sort(compareBlogs)
+        })
+        // await downloadBlogs()
     }
 
     async function handleDelete(blog: ReceivedBlog) {
@@ -81,9 +87,12 @@ function App() {
             if (await blogService.deleteBlog(blog.id)) {
                 // TODO: Find a better solution that doesn't require downloading all the blogs again,
                 //  rather remove the one deleted blog from the array `blogs` itself
-                await downloadBlogs()
-            }
-            else {
+                setBlogs(prevBlogs => prevBlogs
+                    .filter(currentBlog => currentBlog.id !== blog.id)
+                    .sort(compareBlogs)
+                )
+                // await downloadBlogs()
+            } else {
                 alert(`Failed to remove the blog ${blog.title} By ${blog.author}`)
             }
         }
