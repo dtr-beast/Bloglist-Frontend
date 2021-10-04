@@ -9,6 +9,9 @@ interface CredentialParams {
 
 const login = async (credentials: CredentialParams) => {
     const response = await axios.post(URL, credentials)
+    if (response.data.error) {
+        throw new Error(response.data.error)
+    }
     return response.data
 }
 

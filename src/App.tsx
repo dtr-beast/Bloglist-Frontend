@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 
 import Blog from './Components/Blog'
 import BlogForm from "./Components/BlogForm";
-import LoginForm from "./Components/LoginForm";
+import SignInForm from "./Components/SignInForm";
 
-import loginService from "./services/loginService";
 import Toggleable from "./Components/Toggleable";
 import blogService from './services/blogService'
 import {ReceivedBlog, User} from "./Interfaces";
+
 
 function App() {
     const [blogs, setBlogs] = useState<ReceivedBlog[]>([])
@@ -31,28 +31,25 @@ function App() {
         setBlogs(blogs)
     }
 
-    useEffect(() => {
-        downloadBlogs().then(r => {})
-    }, [])
+    const memoDownloadBlogs = useCallback(downloadBlogs, [downloadBlogs])
+
 
     useEffect(() => {
-        const token = window.localStorage.getItem('loggedBlogAppUser')
-        if (token) {
-            const user = JSON.parse(token)
-            setUser(user)
-            blogService.setToken(user.token)
-        }
-    }, [])
+        (async () => {
+            const token = window.localStorage.getItem('loggedBlogAppUser')
+            if (token) {
+                const user = JSON.parse(token)
+                setUser(user)
+                blogService.setToken(user.token)
+                await memoDownloadBlogs()
+            }
+        })()
+    }, [memoDownloadBlogs])
 
-    async function handleLogin(username: string, password: string) {
-        try {
-            const user = await loginService.login({username, password})
-            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-            setUser(user)
-        } catch (e) {
-            console.log('Login Failed')
-            console.log(e)
-        }
+    async function submitUser(user: User) {
+        window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+        setUser(user)
+        await downloadBlogs()
     }
 
     function handleLogout() {
@@ -98,12 +95,11 @@ function App() {
         }
     }
 
-
     return <>
         <h2>Blogs</h2>
         {
             user === null ?
-                <LoginForm onSubmit={handleLogin}/> :
+                <SignInForm submitUser={submitUser}/> :
                 <>
                     <p>{user.name} logged-in <button type="button" onClick={handleLogout}>Log Out</button></p>
                     <Toggleable buttonLabel="Create New Blog">
