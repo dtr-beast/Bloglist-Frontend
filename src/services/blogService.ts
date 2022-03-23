@@ -3,7 +3,7 @@ import {ReceivedBlog} from '../Interfaces'
 import {Blog} from "../Models/blog.model";
 
 const URL = '/api/blogs'
-let token: String
+let token: string
 
 async function getAll(): Promise<ReceivedBlog[]> {
     const response = await axios.get(URL)

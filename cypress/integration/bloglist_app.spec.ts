@@ -1,18 +1,13 @@
-import cypress from "cypress";
-
 describe('Blog app', function () {
     beforeEach(function () {
         resetData()
     })
 
     it('Front page can be opened', function () {
-        cy.contains('Blogs')
-        cy.contains('Log into Application')
+        cy.contains('Blogs List App')
+        cy.contains('Sign In')
     })
 
-    // it('Login form can be opened', function () {
-    //     cy.contains('Login').click()
-    // })
 })
 
 
@@ -23,7 +18,6 @@ describe('Logging in', function () {
     })
 
     it('Login fails with wrong password', function () {
-        cy.contains('Login').click()
 
         cy.get('#username').type('kROSS')
         cy.get('#password').type('wrong')
@@ -41,7 +35,8 @@ describe('Logging in', function () {
         cy.get('#password').type('qp!JgMQ8ALddLLb7sQxoAJe?HdPPPqjjq#94!SEn')
         cy.get('#login-button').click()
 
-        cy.contains('Aditya Sharma logged-in')
+        cy.contains('Aditya Sharma')
+        // cy.contains('Logged in')
     })
 })
 
@@ -49,11 +44,10 @@ describe('New Blog creation', function () {
     beforeEach(function () {
         resetData()
         // TODO: Learn how to add custom commands to namespace
-        // @ts-ignore
         cy.login({username: 'kROSS', password: 'qp!JgMQ8ALddLLb7sQxoAJe?HdPPPqjjq#94!SEn'})
     })
 
-    it.only('User can create a new Blog', function () {
+    it('User can create a new Blog', function () {
         cy.contains('Create New Blog').click()
         cy.get('#title').type("Hello")
         cy.get('#author').type('Adele')
@@ -64,27 +58,24 @@ describe('New Blog creation', function () {
         cy.contains('Hello By Adele')
     })
 
-    it.only('User can like a new Blog', function () {
+    it('User can like a new Blog', function () {
         cy.contains('Create New Blog').click()
         cy.get('#title').type("Hello")
         cy.get('#author').type('Adele')
         cy.get('#url').type('https://www.youtube.com/watch?v=YQHsXMglC9A')
-        cy.contains<HTMLButtonElement>('Submit').click()
+        cy.contains <HTMLButtonElement>('Submit').click()
 
         cy.contains('View').click()
         cy.contains('Hello By Adele')
 
-        cy.contains<HTMLButtonElement>('Like').click()
+        cy.contains <HTMLButtonElement>('Like').click()
         cy.contains('1 Likes')
 
         // TODO: Start from 5.20
-
-
     })
 })
 
-
-
+//
 // describe('When logged in', function () {
 //     describe('and several notes exist', function () {
 //         beforeEach(function () {
@@ -118,3 +109,4 @@ function resetData() {
     cy.request('POST', 'http://localhost:3000/api/users/', user)
     cy.visit('http://localhost:3000')
 }
+

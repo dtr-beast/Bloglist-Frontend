@@ -1,13 +1,13 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
-import Blog from './Components/Blog'
-import BlogForm from "./Components/BlogForm";
-import SignInForm from "./Components/SignInForm";
-
-import Toggleable from "./Components/Toggleable";
+import Blog from 'components/Blog'
+import SignInForm from "components/SignInForm";
+import Dashboard from "./components/Dashboard";
+import Toggleable from "components/Toggleable";
 import blogService from './services/blogService'
 import {ReceivedBlog, User} from "./Interfaces";
 
+const compareBlogs = (a: ReceivedBlog, b: ReceivedBlog) => a.likes > b.likes ? -1 : 1
 
 function App() {
     const [blogs, setBlogs] = useState<ReceivedBlog[]>([])
@@ -15,23 +15,12 @@ function App() {
     // User Details
     const [user, setUser] = useState<User | null>(null)
 
-    function compareBlogs(a: ReceivedBlog, b: ReceivedBlog) {
-        if (a.likes > b.likes) {
-            return -1
-        }
-        if (a.likes < b.likes) {
-            return 1
-        }
-        return 0
-    }
 
     async function downloadBlogs() {
         const blogs = await blogService.getAll()
         blogs.sort(compareBlogs)
         setBlogs(blogs)
     }
-
-    const memoDownloadBlogs = useCallback(downloadBlogs, [downloadBlogs])
 
 
     useEffect(() => {
@@ -41,10 +30,10 @@ function App() {
                 const user = JSON.parse(token)
                 setUser(user)
                 blogService.setToken(user.token)
-                await memoDownloadBlogs()
+                await downloadBlogs()
             }
         })()
-    }, [memoDownloadBlogs])
+    }, [])
 
     async function submitUser(user: User) {
         window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
@@ -55,6 +44,7 @@ function App() {
     function handleLogout() {
         window.localStorage.removeItem('loggedBlogAppUser')
         setUser(null)
+        setBlogs([])
     }
 
     async function handleBlog(newBlog: any) {
@@ -95,31 +85,22 @@ function App() {
         }
     }
 
-    return <>
-        <h2>Blogs</h2>
+    return <div className="m-10">
+        {/*<h2 className="text-5xl font-bold underline">Blogs</h2>*/}
         {
             user === null ?
                 <SignInForm submitUser={submitUser}/> :
-                <>
-                    <p>{user.name} logged-in <button type="button" onClick={handleLogout}>Log Out</button></p>
-                    <Toggleable buttonLabel="Create New Blog">
-                        <BlogForm onSubmit={handleBlog}/>
-                    </Toggleable>
-                    <br/>
-                    {
-                        blogs.map(
-                            blog => {
-                                return (
-                                    <Toggleable key={blog.id} buttonLabel="View">
-                                        <Blog blog={blog} onLike={handleLike} onDelete={handleDelete}/>
-                                    </Toggleable>
-                                )
-                            }
-                        )
-                    }
-                </>
+                // TODO Refine
+                <Dashboard user={user} onLogout={handleLogout} onSubmit={handleBlog} receivedBlogs={blogs}
+                           callbackfn={blog => {
+                               return (
+                                   <Toggleable key={blog.id} buttonLabel="View">
+                                       <Blog blog={blog} onLike={handleLike} onDelete={handleDelete}/>
+                                   </Toggleable>
+                               )
+                           }}/>
         }
-    </>
+    </div>
 
 }
 

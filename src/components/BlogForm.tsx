@@ -31,15 +31,20 @@ function BlogForm({onSubmit}: BlogFormProps) {
         <form onSubmit={handleSubmit}>
             <h3>Title</h3>
             <input
+                className={'rounded border-2 border-gray-500'}
                 id="title"
                 type="text"
                 value={title}
                 name="title"
-                onChange={({target}) => setTitle(target.value)}
+                onChange={({target}) => {
+                    setTitle(target.value)
+                    console.log(target.value)
+                }}
             />
             <br/>
             <h3>Author</h3>
             <input
+                className={'rounded border-2 border-gray-500'}
                 id="author"
                 type="text"
                 value={author}
@@ -49,6 +54,7 @@ function BlogForm({onSubmit}: BlogFormProps) {
             <br/>
             <h3>URL</h3>
             <input
+                className={'rounded border-2 border-gray-500'}
                 id="url"
                 type="text"
                 value={url}

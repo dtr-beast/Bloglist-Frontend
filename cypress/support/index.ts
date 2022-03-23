@@ -13,8 +13,18 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
+// Import commands.ts using ES2015 syntax:
 import './commands'
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+declare global {
+    namespace Cypress {
+        interface Chainable {
+            /**
+             * Custom command to select accelerate the login procedure.
+             * @example cy.login('kross', '123456')
+             */
+
+            login({username, password}: { username: string, password: string }): Chainable<Element>
+        }
+    }
+}

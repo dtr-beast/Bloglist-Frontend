@@ -2,7 +2,7 @@ import React from "react";
 import {render, fireEvent, RenderResult} from "@testing-library/react";
 import '@testing-library/jest-dom/extend-expect'
 
-import Blog from '../Components/Blog'
+import Blog from '../components/Blog'
 import {ReceivedBlog} from "../Interfaces";
 
 describe('<Blog/>', () => {
